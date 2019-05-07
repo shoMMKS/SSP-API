@@ -8,4 +8,4 @@ script:
   - coverage run mvn package
   
 after_success:
-  - coveralls
+  - mvn clean cobertura:cobertura coveralls:cobertura
