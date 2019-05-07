@@ -1,9 +1,6 @@
 language:
   - java
   
- install:
-  - pip install coveralls
-  
 script:
   - coverage run mvn package
   
