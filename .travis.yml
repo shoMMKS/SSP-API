@@ -1,2 +1,11 @@
-language: java
-script: mvn package
+language:
+  - java
+  
+ install:
+  - pip install coveralls
+  
+script:
+  - coverage run mvn package
+  
+after_success:
+  - coveralls
