@@ -1,2 +1,2 @@
-language:Java
-script:mvn package
+language: java
+script: mvn package
