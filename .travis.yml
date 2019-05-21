@@ -1,2 +1,8 @@
-language: java
-script: mvn package
+language:
+  - java
+  
+script:
+  - coverage run mvn package
+  
+after_success:
+  - mvn clean cobertura:cobertura coveralls:cobertura
