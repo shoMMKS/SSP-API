@@ -30,7 +30,7 @@
     <properties>
         <helidon.version>1.0.3</helidon.version>
         <helidon.plugin.version>1.0.10</helidon.plugin.version>
-        <mainClass>SSP-API.Main</mainClass>
+        <mainClass>SSP_API.Main</mainClass>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
         <libs.classpath.prefix>libs</libs.classpath.prefix>
@@ -98,7 +98,10 @@
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>2.2.0</version>
+                <version>4.2.0</version>
+                <configuration>
+                <sourceEncoding>utf-8</sourceEncoding>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -133,14 +136,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>4.2.0</version>
-                <configuration>
-                <sourceEncoding>utf-8</sourceEncoding>
-                </configuration>
-            </plugin>
+            
         </plugins>
     </build>
 

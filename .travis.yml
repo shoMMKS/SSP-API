@@ -5,4 +5,4 @@ script:
   - coverage run mvn package
   
 after_success:
-  - mvn clean cobertura:cobertura coveralls:cobertura
+  - mvn -DrepoToken=$coveralls-token clean cobertura:cobertura coveralls:report
