@@ -32,7 +32,7 @@ limitations under the License.
     <helidon.version>1.0.3</helidon.version>
     <helidon.plugin.version>1.0.10</helidon.plugin.version>
     <mainClass>SSP_API.Main</mainClass>
-    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
     <libs.classpath.prefix>libs</libs.classpath.prefix>
     <copied.libs.dir>${project.build.directory}/${libs.classpath.prefix}</copied.libs.dir>
