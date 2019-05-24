@@ -8,4 +8,4 @@ script:
   - mvn package
   
 after_success:
-  - mvn -DrepoToken=$coveralls-token clean test jacoco:report coveralls:report
+  - mvn -e -X -DrepoToken=$coveralls-token clean test jacoco:report coveralls:report
