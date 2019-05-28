@@ -32,7 +32,7 @@ limitations under the License.
     <helidon.version>1.0.3</helidon.version>
     <helidon.plugin.version>1.0.10</helidon.plugin.version>
     <mainClass>SSP_API.Main</mainClass>
-    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.source>8</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
     <libs.classpath.prefix>libs</libs.classpath.prefix>
     <copied.libs.dir>${project.build.directory}/${libs.classpath.prefix}</copied.libs.dir>
@@ -105,16 +105,30 @@ limitations under the License.
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.2</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+<!--
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>2.7</version>
         <configuration>
           <format>xml</format>
           <maxmem>256m</maxmem>
-          <!-- aggregated reports for multi-module projects -->
           <aggregate>true</aggregate>
         </configuration>
       </plugin>
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -143,6 +157,18 @@ limitations under the License.
 
   <dependencyManagement>
     <dependencies>
+      <!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api -->
+      <dependency>
+	    <groupId>javax.xml.bind</groupId>
+	    <artifactId>jaxb-api</artifactId>
+	    <version>2.4.0-b180830.0359</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+      <dependency>
+	    <groupId>org.glassfish.jaxb</groupId>
+	    <artifactId>jaxb-runtime</artifactId>
+	    <version>2.4.0-b180830.0438</version>
+      </dependency>
       <dependency>
         <groupId>io.helidon</groupId>
         <artifactId>helidon-bom</artifactId>

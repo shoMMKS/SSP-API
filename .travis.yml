@@ -2,10 +2,10 @@ language:
   - java
   
 jdk:
-   - openjdk11
+   - openjdk8
 
 script:
   - mvn package
   
 after_success:
-  - mvn -DrepoToken=$coveralls-token clean cobertura:cobertura coveralls:report
+  - mvn -e -X -DrepoToken=$coveralls_token test jacoco:report coveralls:report
