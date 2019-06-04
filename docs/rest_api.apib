@@ -1,0 +1,77 @@
+FORMAT: 1A
+
+# REST API for Janken Game
+
+# Game [/games{?user,hand,sortOrder}]
+
+## play game [POST]
+
++ Parameters
+    + hand (string, required) - user hand, available values are: stone, scissors, or paper
+    + user (string, optional) - user name
+        + Default: nanashi
+
++ Response 201 (application/json)
+    + Attributes (history)
+
++ Response 400 (application/json)
+
+        { message: "{hand}: unknown hand" }
+
++ Response 400 (application/json)
+
+        { message: "no hand was specified." }
+
+
+## getting the histories of games [GET]
+
++ Parameters
+    + user (string, optional) - filtering by the specified user name.
+    + sortOrder (boolean, optional) - true means ascending order, false is descending order by timestamp.
+        + Default: true
+
++ Response 200 (application/json)
+    + Attributes (array[history], fixed_type)
+
+# Game History [/game/{id}]
+
+## Get a history of game [GET]
+
++ Parameters
+   + id (string, required) - history id of game.
+
++ Response 200 (application/json)
+    + Attributes (history)
+
++ Response 404 (application/json)
+
+        { message: "{id}: not found" }
+
+## Delete a history of game [DELETE]
+
+Delete a history of game.
+Always respond 200 OK.
+
++ Parameters
+   + id (string, required) - history id of game.
+
++ Response 200 (application/json)
+
+        { message: "{id}: deleted" }
+
+# Data Structure
+
+## history
+
++ id: 100 (number) - ID
++ user_hand: `stone` (string) - user hand in a game.
++ pc_hand: `stone` (string) - pc hand in a game.
++ pc_win: `false` (boolean) - pc win flag.
++ user_win: `false` (boolean) - user win flag.
++ user: `nanashi` (string) - user name.
++ timestamp: `2019-06-04T11:24:30` (string) - timestamp
+
+## histories
+
++ histories (array)
+    + (history)
