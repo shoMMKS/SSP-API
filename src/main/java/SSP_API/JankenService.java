@@ -23,6 +23,7 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 
 import io.helidon.common.http.Http;
+import io.helidon.common.http.Parameters;
 import io.helidon.config.Config;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.ServerRequest;
@@ -42,7 +43,7 @@ import io.helidon.webserver.Service;
  * The message is returned as a JSON object
  */
 
-public class GreetService implements Service {
+public class JankenService implements Service {
 
   /**
    * The config value for the key {@code greeting}.
@@ -51,7 +52,7 @@ public class GreetService implements Service {
 
   private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Collections.emptyMap());
 
-  GreetService(Config config) {
+  JankenService(Config config) {
     this.greeting = config.get("app.greeting").asString().orElse("Ciao");
   }
 
@@ -64,7 +65,7 @@ public class GreetService implements Service {
   public void update(Routing.Rules rules) {
     rules
       .get("/", this::getDefaultMessageHandler)
-      .post("/", this::getMessageHandler);
+      .post("/", this::playJanken);
   }
 
   /**
@@ -78,12 +79,13 @@ public class GreetService implements Service {
   }
 
   /**
-   * Return a greeting message using the name that was provided.
+   * Perform a janken game and return the result.
    * 
    * @param request  the server request
    * @param response the server response
    */
-  private void getMessageHandler(ServerRequest request, ServerResponse response) {
+  private void playJanken(ServerRequest request, ServerResponse response) {
+    Parameters params = request.queryParams();
     String name = request.path().param("name");
     sendResponse(response, name);
   }
