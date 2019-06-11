@@ -30,6 +30,8 @@ import io.helidon.webserver.ServerRequest;
 import io.helidon.webserver.ServerResponse;
 import io.helidon.webserver.Service;
 
+import java.util.*;
+
 /**
  * A simple service to greet you. Examples:
  *
@@ -45,78 +47,85 @@ import io.helidon.webserver.Service;
 
 public class JankenService implements Service {
 
-  /**
-   * The config value for the key {@code greeting}.
-   */
-  private String greeting;
+	/**
+	 * The config value for the key {@code greeting}.
+	 */
+	private String greeting;
 
-  private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Collections.emptyMap());
+	private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Collections.emptyMap());
 
-  JankenService(Config config) {
-    this.greeting = config.get("app.greeting").asString().orElse("Ciao");
-  }
+	JankenService(Config config) {
+		this.greeting = config.get("app.greeting").asString().orElse("Ciao");
+	}
 
-  /**
-   * A service registers itself by updating the routine rules.
-   * 
-   * @param rules the routing rules.
-   */
-  @Override
-  public void update(Routing.Rules rules) {
-    rules
-      .get("/", this::getDefaultMessageHandler)
-      .post("/", this::playJanken);
-  }
+	/**
+	 * A service registers itself by updating the routine rules.
+	 *
+	 * @param rules the routing rules.
+	 */
+	@Override
+	public void update(Routing.Rules rules) {
+		rules
+		.get("/", this::getDefaultMessageHandler)
+		.post("/", this::playJanken);
+	}
 
-  /**
-   * Return a wordly greeting message.
-   * 
-   * @param request  the server request
-   * @param response the server response
-   */
-  private void getDefaultMessageHandler(ServerRequest request, ServerResponse response) {
-    sendResponse(response, "World");
-  }
+	/**
+	 * Return a wordly greeting message.
+	 *
+	 * @param request  the server request
+	 * @param response the server response
+	 */
+	private void getDefaultMessageHandler(ServerRequest request, ServerResponse response) {
+		sendResponse(response, "World");
+	}
 
-  /**
-   * Perform a janken game and return the result.
-   * 
-   * @param request  the server request
-   * @param response the server response
-   */
-  private void playJanken(ServerRequest request, ServerResponse response) {
-    Parameters params = request.queryParams();
-    String name = request.path().param("name");
-    sendResponse(response, name);
-  }
+	/**
+	 * Perform a janken game and return the result.
+	 *
+	 * @param request  the server request
+	 * @param response the server response
+	 */
+	private void playJanken(ServerRequest request, ServerResponse response) {
+		Parameters params = request.queryParams();
+		Optional<String> hand = params.first("hand");
+		Boolean ishand = hand.isPresent();
+		if (!ishand) {
+				JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", "No hand was specified.").build();
+				response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
+				return;
+		}
+		String name = request.path().param("name");
+		sendResponse(response, name);
+	}
 
-  private void sendResponse(ServerResponse response, String name) {
-    String msg = String.format("%s %s!", greeting, name);
+	private void sendResponse(ServerResponse response, String name) {
+		String msg = String.format("%s %s!", greeting, name);
 
-    JsonObject returnObject = JSON.createObjectBuilder().add("message", msg).build();
-    response.send(returnObject);
-  }
+		JsonObject returnObject = JSON.createObjectBuilder().add("message", msg).build();
+		response.send(returnObject);
+	}
 
-  private void updateGreetingFromJson(JsonObject jo, ServerResponse response) {
+	private void updateGreetingFromJson(JsonObject jo, ServerResponse response) {
 
-    if (!jo.containsKey("greeting")) {
-      JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", "No greeting provided").build();
-      response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
-      return;
-    }
+		if (!jo.containsKey("greeting")) {
+			JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", "No greeting provided").build();
+			response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
+			return;
+		}
 
-    greeting = jo.getString("greeting");
-    response.status(Http.Status.NO_CONTENT_204).send();
-  }
+		greeting = jo.getString("greeting");
+		response.status(Http.Status.NO_CONTENT_204).send();
+	}
 
-  /**
-   * Set the greeting to use in future messages.
-   * 
-   * @param request  the server request
-   * @param response the server response
-   */
-  private void updateGreetingHandler(ServerRequest request, ServerResponse response) {
-    request.content().as(JsonObject.class).thenAccept(jo -> updateGreetingFromJson(jo, response));
-  }
+	/**
+	 * Set the greeting to use in future messages.
+	 *
+	 * @param request  the server request
+	 * @param response the server response
+	 */
+	private void updateGreetingHandler(ServerRequest request, ServerResponse response) {
+		request.content().as(JsonObject.class).thenAccept(jo -> updateGreetingFromJson(jo, response));
+	}
 
 }
