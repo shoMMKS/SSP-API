@@ -97,6 +97,7 @@ public final class Main {
 
         MetricsSupport metrics = MetricsSupport.create();
         GreetService greetService = new GreetService(config);
+        JankenService jankenService = new JankenService(config);
         HealthSupport health = HealthSupport.builder()
                 .add(HealthChecks.healthChecks())   // Adds a convenient set of checks
                 .build();
@@ -106,6 +107,7 @@ public final class Main {
                 .register(health)                   // Health at "/health"
                 .register(metrics)                  // Metrics at "/metrics"
                 .register("/greet", greetService)
+                .register("/games", jankenService)
                 .build();
     }
 
