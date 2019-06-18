@@ -58,6 +58,8 @@ public class JankenService implements Service {
 		this.greeting = config.get("app.greeting").asString().orElse("Ciao");
 	}
 
+	public 
+
 	/**
 	 * A service registers itself by updating the routine rules.
 	 *
@@ -68,6 +70,7 @@ public class JankenService implements Service {
 		rules
 		.get("/", this::getDefaultMessageHandler)
 		.post("/", this::playJanken);
+
 	}
 
 	/**
@@ -95,8 +98,16 @@ public class JankenService implements Service {
 				response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
 				return;
 		}
+		// 0:stone 1:scissors 2:paper
+		Rnadom random = new Random();
+		Integer rand = random.nextInt(3);
+
+		hand.get();
+
+
 		String name = request.path().param("name");
 		sendResponse(response, name);
+
 	}
 
 	private void sendResponse(ServerResponse response, String name) {
