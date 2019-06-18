@@ -17,6 +17,7 @@
 package SSP_API;
 
 import java.util.Collections;
+import java.util.function.Function;
 
 import javax.json.Json;
 import javax.json.JsonBuilderFactory;
@@ -31,6 +32,7 @@ import io.helidon.webserver.ServerResponse;
 import io.helidon.webserver.Service;
 
 import java.util.*;
+import java.lang.IllegalArgumentException;
 
 /**
  * A simple service to greet you. Examples:
@@ -50,7 +52,9 @@ public class JankenService implements Service {
 	/**
 	 * This enum implies hand type.
 	 */
-	public enum hand_type (stone, scissors, paper);
+  public enum hand_type {
+    stone, scissors, paper
+  };
 
 	/**
 	 * The config value for the key {@code greeting}.
@@ -63,21 +67,24 @@ public class JankenService implements Service {
 		this.greeting = config.get("app.greeting").asString().orElse("Ciao");
 	}
 
-	public hand_type judgeHand(String hand){
-		switch(hand){
-			case "stone":
-				return stone;
+  public hand_type judgeHand(Integer hand) {
+    switch (hand) {
+    case 0:
+      return hand_type.stone;
 
-			case "scissors":
-				return scissors;
+    case 1:
+      return hand_type.scissors;
 
-			case "paper":
-				return paper;
+    case 2:
+      return hand_type.paper;
 
-			default:
-				return null;
-		}
-	}
+    default:
+      return null;
+    }
+  }
+  
+  public Object matchGame(hand_type users_hand, hand_type enemys_hand) {
+  }
 
 	/**
 	 * A service registers itself by updating the routine rules.
@@ -118,12 +125,19 @@ public class JankenService implements Service {
 				return;
 		}
 		// 0:stone 1:scissors 2:paper
-		Rnadom random = new Random();
+		Random random = new Random();
 		Integer rand = random.nextInt(3);
 
-		String a_hand = hand.get();
-		hand_type users_hand = judgeHand(a_hand);
-		matchGame(users_hand, )
+    String a_hand = hand.get();
+    hand_type users_hand;
+    try {
+      users_hand = hand_type.valueOf(a_hand);
+    } catch(IllegalArgumentException e) {
+      JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", a_hand + ": unknown hand.").build();
+      response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
+    }
+		hand_type enemys_hand = judgeHand(rand);
+		Object result = matchGame(users_hand, enemys_hand);
 
 		String name = request.path().param("name");
 		sendResponse(response, name);
