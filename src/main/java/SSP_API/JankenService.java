@@ -48,6 +48,11 @@ import java.util.*;
 public class JankenService implements Service {
 
 	/**
+	 * This enum implies hand type.
+	 */
+	public enum hand_type (stone, scissors, paper);
+
+	/**
 	 * The config value for the key {@code greeting}.
 	 */
 	private String greeting;
@@ -58,7 +63,21 @@ public class JankenService implements Service {
 		this.greeting = config.get("app.greeting").asString().orElse("Ciao");
 	}
 
-	public 
+	public hand_type judgeHand(String hand){
+		switch(hand){
+			case "stone":
+				return stone;
+
+			case "scissors":
+				return scissors;
+
+			case "paper":
+				return paper;
+
+			default:
+				return null;
+		}
+	}
 
 	/**
 	 * A service registers itself by updating the routine rules.
@@ -102,8 +121,9 @@ public class JankenService implements Service {
 		Rnadom random = new Random();
 		Integer rand = random.nextInt(3);
 
-		hand.get();
-
+		String a_hand = hand.get();
+		hand_type users_hand = judgeHand(a_hand);
+		matchGame(users_hand, )
 
 		String name = request.path().param("name");
 		sendResponse(response, name);
