@@ -69,21 +69,72 @@ public class JankenService implements Service {
 
   public hand_type judgeHand(Integer hand) {
     switch (hand) {
-    case 0:
-      return hand_type.stone;
+    	case 0:
+      		return hand_type.stone;
 
-    case 1:
-      return hand_type.scissors;
+    	case 1:
+      		return hand_type.scissors;
 
-    case 2:
-      return hand_type.paper;
+      		case 2:
+      		return hand_type.paper;
 
-    default:
-      return null;
+    	default:
+      		return null;
     }
   }
   
   public Object matchGame(hand_type users_hand, hand_type enemys_hand) {
+
+		boolean user_win = false,pc_win = false;
+
+		switch(users_hand){
+			case stone:
+				switch(enemys_hand){
+					case stone:
+						break;
+					case scissors:
+						user_win = true;
+						break;
+					case paper:
+						pc_win = true;
+						break;
+						default:
+							break;
+
+				}
+				break;
+			case scissors:
+				switch(enemys_hand){
+					case stone:
+						pc_win = true;
+						break;
+					case scissors:
+						break;
+					case paper:
+						user_win = true;
+						break;
+					default:
+						break;
+
+				}
+				break;
+			case paper:
+				switch(enemys_hand){
+					case stone:
+						user_win = true;
+						break;
+					case scissors:
+						pc_win = true;
+						break;
+					case paper:
+						break;
+					default:
+						break;
+
+				}
+				break;
+
+		}
   }
 
 	/**
@@ -128,14 +179,14 @@ public class JankenService implements Service {
 		Random random = new Random();
 		Integer rand = random.nextInt(3);
 
-    String a_hand = hand.get();
-    hand_type users_hand;
-    try {
-      users_hand = hand_type.valueOf(a_hand);
-    } catch(IllegalArgumentException e) {
-      JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", a_hand + ": unknown hand.").build();
-      response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
-    }
+    	String a_hand = hand.get();
+    	hand_type users_hand;
+    	try {
+      		users_hand = hand_type.valueOf(a_hand);
+    	} catch(IllegalArgumentException e) {
+      		JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", a_hand + ": unknown hand.").build();
+      		response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
+    	}
 		hand_type enemys_hand = judgeHand(rand);
 		Object result = matchGame(users_hand, enemys_hand);
 
