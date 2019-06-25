@@ -16,7 +16,6 @@
 
 package SSP_API;
 
-import java.util.Collections;
 import java.util.function.Function;
 
 import javax.json.Json;
@@ -83,58 +82,67 @@ public class JankenService implements Service {
     }
   }
   
-  public Object matchGame(hand_type users_hand, hand_type enemys_hand) {
+  public JsonObject matchGame(hand_type users_hand, hand_type enemys_hand, String user_name) {
 
 		boolean user_win = false,pc_win = false;
 
-		switch(users_hand){
-			case stone:
-				switch(enemys_hand){
-					case stone:
-						break;
-					case scissors:
-						user_win = true;
-						break;
-					case paper:
-						pc_win = true;
-						break;
-						default:
-							break;
+    switch (users_hand) {
+    case stone:
+      switch (enemys_hand) {
+      case stone:
+        break;
+      case scissors:
+        user_win = true;
+        break;
+      case paper:
+        pc_win = true;
+        break;
+      default:
+        break;
 
-				}
-				break;
-			case scissors:
-				switch(enemys_hand){
-					case stone:
-						pc_win = true;
-						break;
-					case scissors:
-						break;
-					case paper:
-						user_win = true;
-						break;
-					default:
-						break;
+      }
+      break;
+    case scissors:
+      switch (enemys_hand) {
+      case stone:
+        pc_win = true;
+        break;
+      case scissors:
+        break;
+      case paper:
+        user_win = true;
+        break;
+      default:
+        break;
 
-				}
-				break;
-			case paper:
-				switch(enemys_hand){
-					case stone:
-						user_win = true;
-						break;
-					case scissors:
-						pc_win = true;
-						break;
-					case paper:
-						break;
-					default:
-						break;
+      }
+      break;
+    case paper:
+      switch (enemys_hand) {
+      case stone:
+        user_win = true;
+        break;
+      case scissors:
+        pc_win = true;
+        break;
+      case paper:
+        break;
+      default:
+        break;
 
-				}
-				break;
-
-		}
+      }
+      break;
+    }
+    // todo: idの決め方
+    return JSON.createObjectBuilder()
+            .add("user_hand", users_hand.toString())
+            .add("pc_hand", enemys_hand.toString())
+            .add("user_win", user_win)
+            .add("pc_win", pc_win)
+            .add("id", 1)
+            .add("user", user_name)
+            .add("timestamp", new Date().toString())
+        .build();
   }
 
 	/**
@@ -180,15 +188,15 @@ public class JankenService implements Service {
 		Integer rand = random.nextInt(3);
 
     	String a_hand = hand.get();
-    	hand_type users_hand;
+    	hand_type users_hand = hand_type.stone;
     	try {
       		users_hand = hand_type.valueOf(a_hand);
     	} catch(IllegalArgumentException e) {
       		JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", a_hand + ": unknown hand.").build();
       		response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
     	}
-		hand_type enemys_hand = judgeHand(rand);
-		Object result = matchGame(users_hand, enemys_hand);
+    hand_type enemys_hand = judgeHand(rand);
+		JsonObject result = matchGame(users_hand, enemys_hand, params.first("user").orElse("nanashi"));
 
 		String name = request.path().param("name");
 		sendResponse(response, name);
