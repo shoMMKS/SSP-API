@@ -136,7 +136,7 @@ public class JankenService implements Service {
       break;
     }
     // todo: idの決め方
-    return JSON.createObjectBuilder()
+    /*return JSON.createObjectBuilder()
             .add("user_hand", users_hand.toString())
             .add("pc_hand", enemys_hand.toString())
             .add("user_win", user_win)
@@ -144,7 +144,21 @@ public class JankenService implements Service {
             .add("id", 1)
             .add("user", user_name)
             .add("timestamp", new Date().toString())
-        .build();
+        .build();*/
+
+    String id = UUID.randomUUID().toString();
+    jedis.hset(id, "user_hand", users_hand.toString());
+  	jedis.hset(id, "pc_hand", enemys_hand.toString());
+  	jedis.hset(id, "user_win", Boolean.toString(user_win));
+  	jedis.hset(id, "pc_win", Boolean.toString(pc_win));
+  	jedis.hset(id, "id", id);
+  	jedis.hset(id, "user", user_name);
+  	jedis.hset(id, "timestamp", new Date().toString());
+  	System.out.println(jedis);
+
+  	return null;
+
+
   }
 
 	/**
