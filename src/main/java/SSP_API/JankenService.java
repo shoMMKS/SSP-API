@@ -32,6 +32,7 @@ import io.helidon.webserver.Service;
 
 import java.util.*;
 import java.lang.IllegalArgumentException;
+import redis.clients.jedis.Jedis;
 
 /**
  * A simple service to greet you. Examples:
@@ -61,6 +62,7 @@ public class JankenService implements Service {
 	private String greeting;
 
 	private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Collections.emptyMap());
+  private static Jedis jedis = new Jedis("localhost", 6379);
 
 	JankenService(Config config) {
 		this.greeting = config.get("app.greeting").asString().orElse("Ciao");
@@ -197,10 +199,15 @@ public class JankenService implements Service {
     	}
     hand_type enemys_hand = judgeHand(rand);
 		JsonObject result = matchGame(users_hand, enemys_hand, params.first("user").orElse("nanashi"));
+    System.out.println(result);
 
 		String name = request.path().param("name");
 		sendResponse(response, name);
 
+
+    // jedis.hset(game_id, );
+    // String value = jedis.get("foo");
+    // System.out.println("value: " + value);
 	}
 
 	private void sendResponse(ServerResponse response, String name) {
