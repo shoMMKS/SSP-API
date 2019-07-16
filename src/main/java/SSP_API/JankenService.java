@@ -179,6 +179,13 @@ public class JankenService implements Service {
 		sendResponse(response, "World");
 	}
 
+  private void getResult(ServerRequest request, ServerResponse response){
+    Parameters params = request.queryParams();
+    Optional<String> hand = params.first("hand");
+
+    System.out.println(jedis.hgetAll("0"));    
+  }
+
 	/**
 	 * Perform a janken game and return the result.
 	 *
