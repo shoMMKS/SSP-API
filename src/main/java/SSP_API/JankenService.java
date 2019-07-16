@@ -164,7 +164,7 @@ public class JankenService implements Service {
 	@Override
 	public void update(Routing.Rules rules) {
 		rules
-		.get("/", this::getDefaultMessageHandler)
+		.get("/", this::getResult)
 		.post("/", this::playJanken);
 
 	}
@@ -183,7 +183,8 @@ public class JankenService implements Service {
     Parameters params = request.queryParams();
     Optional<String> hand = params.first("hand");
 
-    System.out.println(jedis.hgetAll("0"));    
+    System.out.println(jedis.hgetAll("0"));
+    sendResponse(response, "Hello");
   }
 
 	/**
