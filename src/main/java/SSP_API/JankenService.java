@@ -135,30 +135,25 @@ public class JankenService implements Service {
       }
       break;
     }
+    String id = UUID.randomUUID().toString();
+    jedis.hset(id, "user_hand", users_hand.toString());
+    jedis.hset(id, "pc_hand", enemys_hand.toString());
+    jedis.hset(id, "user_win", Boolean.toString(user_win));
+    jedis.hset(id, "pc_win", Boolean.toString(pc_win));
+    jedis.hset(id, "id", id);
+    jedis.hset(id, "user", user_name);
+    jedis.hset(id, "timestamp", new Date().toString());
+    System.out.println(jedis.hgetAll(id));
     // todo: idの決め方
-    /*return JSON.createObjectBuilder()
+    return JSON.createObjectBuilder()
             .add("user_hand", users_hand.toString())
             .add("pc_hand", enemys_hand.toString())
             .add("user_win", user_win)
             .add("pc_win", pc_win)
-            .add("id", 1)
+            .add("id", id)
             .add("user", user_name)
             .add("timestamp", new Date().toString())
-        .build();*/
-
-    String id = UUID.randomUUID().toString();
-    jedis.hset(id, "user_hand", users_hand.toString());
-  	jedis.hset(id, "pc_hand", enemys_hand.toString());
-  	jedis.hset(id, "user_win", Boolean.toString(user_win));
-  	jedis.hset(id, "pc_win", Boolean.toString(pc_win));
-  	jedis.hset(id, "id", id);
-  	jedis.hset(id, "user", user_name);
-  	jedis.hset(id, "timestamp", new Date().toString());
-  	System.out.println(jedis);
-
-  	return null;
-
-
+        .build();
   }
 
 	/**
@@ -203,25 +198,20 @@ public class JankenService implements Service {
 		Random random = new Random();
 		Integer rand = random.nextInt(3);
 
-    	String a_hand = hand.get();
-    	hand_type users_hand = hand_type.stone;
-    	try {
-      		users_hand = hand_type.valueOf(a_hand);
-    	} catch(IllegalArgumentException e) {
-      		JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", a_hand + ": unknown hand.").build();
-      		response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
-    	}
+    String a_hand = hand.get();
+    hand_type users_hand = hand_type.stone;
+    try {
+      users_hand = hand_type.valueOf(a_hand);
+    } catch(IllegalArgumentException e) {
+      JsonObject jsonErrorObject = JSON.createObjectBuilder().add("error", a_hand + ": unknown hand.").build();
+      response.status(Http.Status.BAD_REQUEST_400).send(jsonErrorObject);
+      return;
+    }
     hand_type enemys_hand = judgeHand(rand);
 		JsonObject result = matchGame(users_hand, enemys_hand, params.first("user").orElse("nanashi"));
-    System.out.println(result);
 
-		String name = request.path().param("name");
-		sendResponse(response, name);
-
-
-    // jedis.hset(game_id, );
-    // String value = jedis.get("foo");
-    // System.out.println("value: " + value);
+    response.status(Http.Status.CREATED_201).send(result);
+    return;
 	}
 
 	private void sendResponse(ServerResponse response, String name) {
