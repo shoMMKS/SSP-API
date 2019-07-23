@@ -136,14 +136,6 @@ public class JankenService implements Service {
       break;
     }
     String id = UUID.randomUUID().toString();
-    jedis.hset(id, "user_hand", users_hand.toString());
-    jedis.hset(id, "pc_hand", enemys_hand.toString());
-    jedis.hset(id, "user_win", Boolean.toString(user_win));
-    jedis.hset(id, "pc_win", Boolean.toString(pc_win));
-    jedis.hset(id, "id", id);
-    jedis.hset(id, "user", user_name);
-    jedis.hset(id, "timestamp", new Date().toString());
-    // System.out.println(jedis.hgetAll(id));
     // todo: idの決め方
     return JSON.createObjectBuilder()
             .add("user_hand", users_hand.toString())
@@ -181,9 +173,12 @@ public class JankenService implements Service {
 
   private void getResult(ServerRequest request, ServerResponse response){
     Parameters params = request.queryParams();
-    Optional<String> hand = params.first("hand");
-
-    System.out.println(jedis.hgetAll("0"));
+    Optional<String> user_name = params.first("user");
+    if (user_name.isEmpty()) {
+      // 全ての結果を返す
+    }
+    System.out.println(jedis.lrange("abc", 0, jedis.llen("abc")));
+    // ArrayList data = jedis.lrange("abc", 0, jedis.llen("abc"));
     sendResponse(response, "Hellow");
   }
 
@@ -217,7 +212,7 @@ public class JankenService implements Service {
     }
     hand_type enemys_hand = judgeHand(rand);
 		JsonObject result = matchGame(users_hand, enemys_hand, params.first("user").orElse("nanashi"));
-    jedis.rpush("abc",result);
+    jedis.rpush("abc", result.toString());
 
     response.status(Http.Status.CREATED_201).send(result);
     return;
