@@ -143,7 +143,7 @@ public class JankenService implements Service {
     jedis.hset(id, "id", id);
     jedis.hset(id, "user", user_name);
     jedis.hset(id, "timestamp", new Date().toString());
-    System.out.println(jedis.hgetAll(id));
+    // System.out.println(jedis.hgetAll(id));
     // todo: idの決め方
     return JSON.createObjectBuilder()
             .add("user_hand", users_hand.toString())
@@ -184,7 +184,7 @@ public class JankenService implements Service {
     Optional<String> hand = params.first("hand");
 
     System.out.println(jedis.hgetAll("0"));
-    sendResponse(response, "Hello");
+    sendResponse(response, "Hellow");
   }
 
 	/**
@@ -217,6 +217,7 @@ public class JankenService implements Service {
     }
     hand_type enemys_hand = judgeHand(rand);
 		JsonObject result = matchGame(users_hand, enemys_hand, params.first("user").orElse("nanashi"));
+    jedis.rpush("abc",result);
 
     response.status(Http.Status.CREATED_201).send(result);
     return;
