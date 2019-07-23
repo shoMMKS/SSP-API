@@ -174,8 +174,13 @@ public class JankenService implements Service {
   private void getResult(ServerRequest request, ServerResponse response){
     Parameters params = request.queryParams();
     Optional<String> user_name = params.first("user");
+
+    List<String> data = jedis.lrange("abc", 0, jedis.llen("abc"));
     if (user_name.isEmpty()) {
       // 全ての結果を返す
+		response.status(Http.Status.OK_200).send(data.toString());
+		System.out.println(jedis.lrange("abc", 0, jedis.llen("abc")));
+		return;
     }
     System.out.println(jedis.lrange("abc", 0, jedis.llen("abc")));
     // ArrayList data = jedis.lrange("abc", 0, jedis.llen("abc"));
